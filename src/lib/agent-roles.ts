@@ -131,6 +131,10 @@ export const ROLES: Record<ClaveRol, Rol> = {
       "pide_humano",
       "errores_modismos",
       "sin_rumbo",
+      "aspirante_sin_operacion",
+      "costo_futuro_facturacion",
+      "dev_quiere_trabajar",
+      "rafaga_audio_precio",
     ],
   },
 };
