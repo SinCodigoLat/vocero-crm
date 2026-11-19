@@ -1,12 +1,12 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # Fork SinCódigo — Carga las credenciales de Google Calendar + Meet de la
 # organización sin pasar por la pantalla (los secretos no tocan un formulario).
 # Lee por stdin: {"clientId":"…","clientSecret":"…","refreshToken":"…","calendarId":"primary"}
-# Uso (desde el Mac):  … | ssh mivps 'cd /root/vocero-crm && sh scripts/sincodigo/set-google-creds.sh'
+# Uso (desde el Mac):  … | ssh mivps 'cd /root/vocero-crm && bash scripts/sincodigo/set-google-creds.sh'
 # Cifra con la ENCRYPTION_KEY del contenedor app (AES-256-GCM, igual que el CRM).
-set -eu
+set -euo pipefail
 DC="docker compose -f docker-compose.yml -f docker-compose.sincodigo.yml"
-ORG=${1:-$($DC exec -T postgres psql -U postgres -d vocero -At -c "select id from organization order by created_at limit 1")}
+ORG=${1:-$($DC exec -T postgres psql -U postgres -d vocero -At -c "select id from organization order by created_at limit 1" </dev/null)}
 $DC exec -T app node -e '
 const c=require("crypto");let d="";process.stdin.on("data",x=>d+=x).on("end",()=>{
 const j=JSON.parse(d);const k=Buffer.from(process.env.ENCRYPTION_KEY,"base64");
