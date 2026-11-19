@@ -73,7 +73,10 @@ self.addEventListener("notificationclick", (event) => {
   event.notification.close();
   const pedida = event.notification.data && event.notification.data.url;
   const url =
-    typeof pedida === "string" && /^\/inbox(\?conversation=[\w%-]+)?$/.test(pedida) ? pedida : "/inbox";
+    typeof pedida === "string" &&
+    (/^\/inbox(\?conversation=[\w%-]+)?$/.test(pedida) || pedida === "/bookings")
+      ? pedida
+      : "/inbox";
   event.waitUntil(
     (async () => {
       const ventanas = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
@@ -84,6 +87,30 @@ self.addEventListener("notificationclick", (event) => {
         return;
       }
       await self.clients.openWindow(url);
+    })()
+  );
+});
+
+// Fork SinCódigo — Push real (Web Push con VAPID). El aviso llega sin cuerpo:
+// se pregunta al CRM qué pasó, con la sesión del dispositivo. En iPhone hay que
+// mostrar SIEMPRE un aviso por cada push, así que hay uno de respaldo.
+self.addEventListener("push", (event) => {
+  event.waitUntil(
+    (async () => {
+      let aviso = { titulo: "Agenda", cuerpo: "Hay novedades en tu agenda", url: "/bookings" };
+      try {
+        const r = await fetch("/api/push/pendiente", { credentials: "include", cache: "no-store" });
+        if (r.ok) aviso = await r.json();
+      } catch {
+        // Sin red o sin sesión: sale el aviso de respaldo.
+      }
+      await self.registration.showNotification(aviso.titulo, {
+        body: aviso.cuerpo,
+        tag: "cita",
+        renotify: true,
+        icon: "/api/branding/app-icon?size=192",
+        data: { url: aviso.url },
+      });
     })()
   );
 });

@@ -13,6 +13,7 @@ import { avisoIaDe } from "@/server/ai/aviso";
 import { ChatFlotante } from "@/components/agent/chat-flotante";
 import { leerConfigDespacho } from "@/server/brains/config";
 import { AvisoIaBanner } from "@/components/avisos/aviso-ia";
+import { AsegurarPush } from "@/components/push-suscripcion";
 
 export default async function AppLayout({
   children,
@@ -49,6 +50,7 @@ export default async function AppLayout({
     >
       {children}
       {leerConfigDespacho().active && <ChatFlotante />}
+      <AsegurarPush />
     </AppShell>
   );
 }

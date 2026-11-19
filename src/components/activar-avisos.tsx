@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { BellRing } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { permisoAvisos } from "./avisos-de-mensajes";
+import { suscribirPush } from "./push-suscripcion";
 
 /**
  * 056 · D1 — La fila «Activar avisos» del menú. Solo aparece mientras el
@@ -20,7 +21,10 @@ export function BotonActivarAvisos({ className }: { className?: string }) {
       className={cn("w-full text-left", className)}
       onClick={async () => {
         try {
-          setPermiso(await Notification.requestPermission());
+          const p = await Notification.requestPermission();
+          setPermiso(p);
+          // Fork SinCódigo: con permiso, este dispositivo recibe push de citas.
+          if (p === "granted") void suscribirPush();
         } catch {
           setPermiso(permisoAvisos());
         }

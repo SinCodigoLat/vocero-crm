@@ -86,6 +86,13 @@ export const envSchema = z.object({
   MEDIA_BUCKET_REGION: z.string().default("auto"),
   MEDIA_BUCKET_KEY_ID: z.string().optional(),
   MEDIA_BUCKET_SECRET: z.string().optional(),
+  // Fork SinCódigo: avisos push (Web Push con VAPID). Sin las dos llaves, no
+  // se suscribe nadie y no se envía nada. Se generan con
+  // `node scripts/sincodigo/vapid-keys.mjs`. Base64url: la pública es el punto
+  // P-256 sin comprimir (65 bytes) y la privada, el escalar d (32 bytes).
+  VAPID_PUBLIC_KEY: z.string().optional(),
+  VAPID_PRIVATE_KEY: z.string().optional(),
+  VAPID_SUBJECT: z.string().optional(),
   NODE_ENV: z.string().default("development"),
 });
 

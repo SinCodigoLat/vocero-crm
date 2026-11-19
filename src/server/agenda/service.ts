@@ -3,6 +3,7 @@ import { getDb, schema } from "@/lib/db";
 import { newId } from "@/lib/db/ids";
 import { scoped } from "@/lib/db/tenant";
 import { labelInTz } from "@/lib/time/slots";
+import { avisarATodos } from "@/server/push/enviar";
 import { CONNECTOR_META, type ConnectorId } from "@/lib/agenda-connectors";
 import {
   computeAvailability,
@@ -240,6 +241,14 @@ export async function createSessionBooking(input: {
     type: "booking.updated",
     data: { bookingId: delivered.id },
   });
+
+  // Fork SinCódigo: aviso push a los dispositivos del negocio (no por citas
+  // del Laboratorio). Sin esperar: el aviso nunca demora la confirmación.
+  if (!isTest) {
+    void avisarATodos(input.organizationId).catch((err) => {
+      console.warn(`[agenda] aviso push falló: ${err}`);
+    });
+  }
 
   return {
     booking: delivered,
