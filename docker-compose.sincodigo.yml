@@ -15,5 +15,9 @@ services:
       # Embedded Signup (Tech Provider): el compose oficial no los pasa.
       META_APP_ID: ${META_APP_ID:-}
       META_EMBEDDED_CONFIG_ID: ${META_EMBEDDED_CONFIG_ID:-}
+  nea:
+    environment:
+      # Números que pueden mandar /reset para empezar como lead nuevo (CSV).
+      TESTER_WA_IDS: ${TESTER_WA_IDS:-}
   caddy:
     profiles: ["disabled"]

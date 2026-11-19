@@ -5,6 +5,7 @@ import { apiError, parseBody } from "@/lib/api";
 import { requireBotKey, resolveInstanceOrg } from "@/server/bot/auth";
 import { publish } from "@/server/events/bus";
 import { moveLeadToStage } from "@/server/leads/stage-history";
+import { vaciarFicha } from "@/server/bot/ficha";
 
 export const dynamic = "force-dynamic";
 
@@ -56,6 +57,11 @@ export async function POST(req: Request) {
       updatedAt: new Date(),
     })
     .where(eq(schema.conversation.id, conv.id));
+
+  // SinCódigo — la ficha también se vacía: Nea la lee en cada turno y, sin
+  // esto, el /reset de pruebas seguía «recordando» al lead (ciudad,
+  // presupuesto, si decide). El historial del inbox se conserva.
+  await vaciarFicha(db, organizationId, conv.contactId);
 
   // Etapa al inicio del funnel (best-effort: sin etapas no revienta el reset).
   try {
