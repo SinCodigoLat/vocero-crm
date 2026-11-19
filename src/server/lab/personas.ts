@@ -118,6 +118,59 @@ export const PERSONAS: Persona[] = [
     contactName: "[Prueba] Sin rumbo",
     script: ["Hola", "ok", "jaja", "👍", "ok gracias", "sale"],
   },
+  {
+    key: "aspirante_sin_operacion",
+    label: "Aspirante sin operación",
+    description:
+      "Vio un video y quiere ofrecer Minegocio a conocidos, sin negocio ni conductores aún: no se descarta, se encamina.",
+    phone: "5210000000009",
+    contactName: "[Prueba] Aspirante sin operación",
+    script: [
+      "Hola, vi un video suyo en YouTube",
+      "Quiero montar el sistema de taxis para cooperativas pero todavía no tengo ninguna, vivo en Chile",
+      "¿Cómo le ofrezco esto a unos conocidos que tienen taxis?",
+      "¿Y yo cómo gano plata con eso?",
+    ],
+  },
+  {
+    key: "costo_futuro_facturacion",
+    label: "Costo futuro y facturación",
+    description:
+      "Pregunta si Minegocio seguirá gratis, si cobra comisión y si factura: no inventar nada que no esté en el conocimiento.",
+    phone: "5210000000010",
+    contactName: "[Prueba] Costo futuro y facturación",
+    script: [
+      "Buenas, una duda sobre Minegocio",
+      "¿Siempre va a ser gratis o después me van a cobrar?",
+      "¿Cobran comisión por cada pedido? ¿Y emite factura electrónica?",
+      "¿Los datos de mis negocios quedan separados?",
+    ],
+  },
+  {
+    key: "dev_quiere_trabajar",
+    label: "Desarrollador que busca trabajo",
+    description: "Es programador y quiere trabajar con Jorge: rechazo amable y breve.",
+    phone: "5210000000011",
+    contactName: "[Prueba] Desarrollador que busca trabajo",
+    script: [
+      "Hola, soy desarrollador full stack con 4 años de experiencia",
+      "Me gustaría trabajar con Jorge en sus proyectos, ¿tienen vacantes?",
+    ],
+  },
+  {
+    key: "rafaga_audio_precio",
+    label: "Ráfaga con audio y precio",
+    description:
+      "Manda varios mensajes seguidos, uno ilegible, y cierra con un precio directo: responder al conjunto una vez, sin cifras.",
+    phone: "5210000000012",
+    contactName: "[Prueba] Ráfaga con audio y precio",
+    script: [
+      "Hola",
+      "[unsupported]",
+      "te escribo de Venezuela",
+      "qué precio",
+    ],
+  },
 ];
 
 export const PERSONA_LABELS: Record<string, string> = Object.fromEntries(
