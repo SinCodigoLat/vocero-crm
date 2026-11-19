@@ -707,6 +707,59 @@ export const agentProfile = pgTable(
   (t) => [uniqueIndex("agent_profile_org_uq").on(t.organizationId)]
 );
 
+/**
+ * Versiones del comportamiento del agente: una foto del perfil (nombre, tono,
+ * instrucciones, escalado, saludo, rol, herramientas) y del conocimiento, con
+ * nota, autor y el score del Laboratorio de esa versión. Restaurar una
+ * versión vuelve a poner esa foto (y antes guarda la actual).
+ */
+export const agentProfileVersion = pgTable(
+  "agent_profile_version",
+  {
+    id: text("id").primaryKey(),
+    organizationId: text("organization_id")
+      .notNull()
+      .references(() => organization.id, { onDelete: "cascade" }),
+    /** Correlativo por organización: v1, v2, v3… */
+    numero: integer("numero").notNull(),
+    origen: text("origen", {
+      enum: ["manual", "auto", "antes_de_restaurar", "restaurada", "inicial"],
+    }).notNull(),
+    nota: text("nota"),
+    snapshot: jsonb("snapshot").$type<AgentVersionSnapshot>().notNull(),
+    /** Huella del snapshot: evita guardar dos versiones idénticas seguidas. */
+    huella: text("huella").notNull(),
+    authorUserId: text("author_user_id").references(() => user.id, {
+      onDelete: "set null",
+    }),
+    /** Score de la última corrida del Laboratorio sobre esta versión. */
+    labScore: integer("lab_score"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("agent_version_org_num_uq").on(t.organizationId, t.numero),
+    index("agent_version_org_idx").on(t.organizationId, t.createdAt),
+  ]
+);
+
+export type AgentVersionSnapshot = {
+  profile: {
+    name: string;
+    tone: string | null;
+    instructions: string | null;
+    escalationRules: string | null;
+    greeting: string | null;
+    role: string;
+    tools: string[] | null;
+  };
+  kb: {
+    kind: "qa" | "block";
+    question: string | null;
+    answer: string | null;
+    content: string | null;
+  }[];
+};
+
 export const kbEntry = pgTable(
   "kb_entry",
   {

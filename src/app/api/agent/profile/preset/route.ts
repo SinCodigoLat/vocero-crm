@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { conVersion } from "@/server/agent/versions";
 import { apiError, parseBody, withAuth } from "@/lib/api";
 import { canConfigure } from "@/lib/auth/roles";
 import { getDb, schema } from "@/lib/db";
@@ -24,17 +25,19 @@ export const POST = withAuth(async (session, req: Request) => {
   if (!body.ok) return body.response;
   const rol = ROLES[body.data.role];
 
-  const updated = await getDb()
-    .update(schema.agentProfile)
-    .set({
-      role: rol.clave,
-      instructions: rol.instrucciones,
-      escalationRules: rol.reglasDeEscalado,
-      tools: [...rol.herramientas],
-      updatedAt: new Date(),
-    })
-    .where(scoped(schema.agentProfile.organizationId, session.organizationId))
-    .returning();
+  const updated = await conVersion(session.organizationId, session.userId, () =>
+    getDb()
+      .update(schema.agentProfile)
+      .set({
+        role: rol.clave,
+        instructions: rol.instrucciones,
+        escalationRules: rol.reglasDeEscalado,
+        tools: [...rol.herramientas],
+        updatedAt: new Date(),
+      })
+      .where(scoped(schema.agentProfile.organizationId, session.organizationId))
+      .returning()
+  );
   if (!updated[0]) return apiError(404, "not_found", "Perfil no encontrado");
   return Response.json({ ok: true, role: rol.clave });
 });

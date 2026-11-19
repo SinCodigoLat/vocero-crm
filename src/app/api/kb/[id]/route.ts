@@ -3,6 +3,7 @@ import { z } from "zod";
 import { apiError, parseBody, withAuth } from "@/lib/api";
 import { getDb, schema } from "@/lib/db";
 import { scoped } from "@/lib/db/tenant";
+import { conVersion } from "@/server/agent/versions";
 
 export const dynamic = "force-dynamic";
 
@@ -20,17 +21,19 @@ export const PATCH = withAuth(async (session, req: Request, ctx: Params) => {
   if (!body.ok) return body.response;
 
   const db = getDb();
-  const updated = await db
-    .update(schema.kbEntry)
-    .set({ ...body.data, updatedAt: new Date() })
-    .where(
-      scoped(
-        schema.kbEntry.organizationId,
-        session.organizationId,
-        eq(schema.kbEntry.id, id)
+  const updated = await conVersion(session.organizationId, session.userId, () =>
+    db
+      .update(schema.kbEntry)
+      .set({ ...body.data, updatedAt: new Date() })
+      .where(
+        scoped(
+          schema.kbEntry.organizationId,
+          session.organizationId,
+          eq(schema.kbEntry.id, id)
+        )
       )
-    )
-    .returning();
+      .returning()
+  );
   if (!updated[0]) return apiError(404, "not_found", "Entrada no encontrada");
   return Response.json({ entry: updated[0] });
 });
@@ -38,16 +41,18 @@ export const PATCH = withAuth(async (session, req: Request, ctx: Params) => {
 export const DELETE = withAuth(async (session, _req: Request, ctx: Params) => {
   const { id } = await ctx.params;
   const db = getDb();
-  const deleted = await db
-    .delete(schema.kbEntry)
-    .where(
-      scoped(
-        schema.kbEntry.organizationId,
-        session.organizationId,
-        eq(schema.kbEntry.id, id)
+  const deleted = await conVersion(session.organizationId, session.userId, () =>
+    db
+      .delete(schema.kbEntry)
+      .where(
+        scoped(
+          schema.kbEntry.organizationId,
+          session.organizationId,
+          eq(schema.kbEntry.id, id)
+        )
       )
-    )
-    .returning();
+      .returning()
+  );
   if (!deleted[0]) return apiError(404, "not_found", "Entrada no encontrada");
   return Response.json({ deleted: true });
 });

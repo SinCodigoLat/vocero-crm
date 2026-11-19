@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { Plus, Sparkles, Trash2 } from "lucide-react";
 import { BrainStatusCard } from "@/components/agent/brain-status-card";
+import { VersionsCard } from "@/components/agent/versions-card";
 import { externalDown, type BrainStatusDto } from "@/lib/brain-status";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -218,6 +219,7 @@ export function AgentClient() {
         />
         <ProfileSection profile={profile} onSave={saveProfile} />
         <KbSection entries={entries} kbSize={kbSize} onChanged={() => void refetch()} />
+        <VersionsCard key={`${saved}-${entries.length}`} onRestored={() => void refetch()} />
       </div>
     </div>
   );

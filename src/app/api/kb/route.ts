@@ -4,6 +4,7 @@ import { apiError, parseBody, withAuth } from "@/lib/api";
 import { getDb, schema } from "@/lib/db";
 import { newId } from "@/lib/db/ids";
 import { scoped } from "@/lib/db/tenant";
+import { conVersion } from "@/server/agent/versions";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +36,8 @@ export const POST = withAuth(async (session, req: Request) => {
   if (!body.ok) return body.response;
 
   const db = getDb();
-  const inserted = await db
+  const inserted = await conVersion(session.organizationId, session.userId, () =>
+    db
     .insert(schema.kbEntry)
     .values({
       id: newId("kbEntry"),
@@ -45,7 +47,8 @@ export const POST = withAuth(async (session, req: Request) => {
       answer: body.data.kind === "qa" ? body.data.answer : null,
       content: body.data.kind === "block" ? body.data.content : null,
     })
-    .returning();
+    .returning()
+  );
   if (!inserted[0]) return apiError(500, "internal", "No se pudo crear");
   return Response.json({ entry: inserted[0] }, { status: 201 });
 });

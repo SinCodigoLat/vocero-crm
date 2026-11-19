@@ -12,6 +12,7 @@ import {
 import { agendaEnabled } from "@/server/agenda/flag";
 import { leerConfigDespacho, urlSaludCerebro } from "@/server/brains/config";
 import { getBrainHealth } from "@/server/bot/status";
+import { conVersion } from "@/server/agent/versions";
 
 export const dynamic = "force-dynamic";
 
@@ -74,15 +75,21 @@ export const PUT = withAuth(async (session, req: Request) => {
 
   const db = getDb();
   const { tools, ...resto } = body.data;
-  const updated = await db
-    .update(schema.agentProfile)
-    .set({
-      ...resto,
-      ...(tools ? { tools: herramientasEfectivas(tools) } : {}),
-      updatedAt: new Date(),
-    })
-    .where(scoped(schema.agentProfile.organizationId, session.organizationId))
-    .returning();
+  const cambia = Object.keys(resto).some((k) => k !== "enabled") || Boolean(tools);
+  const aplicar = () =>
+    db
+      .update(schema.agentProfile)
+      .set({
+        ...resto,
+        ...(tools ? { tools: herramientasEfectivas(tools) } : {}),
+        updatedAt: new Date(),
+      })
+      .where(scoped(schema.agentProfile.organizationId, session.organizationId))
+      .returning();
+  // Encender o apagar el agente no es un cambio de comportamiento: no versiona.
+  const updated = cambia
+    ? await conVersion(session.organizationId, session.userId, aplicar)
+    : await aplicar();
   if (!updated[0]) return apiError(404, "not_found", "Perfil no encontrado");
   return Response.json({ ok: true });
 });

@@ -10,6 +10,7 @@ import { encolarDespacho } from "@/server/dispatch/outbox";
 import { iniciarWorker, programarTanda } from "@/server/dispatch/worker";
 import { computeScore, judgeCase } from "@/server/lab/judge";
 import { PERSONAS, type Persona } from "@/server/lab/personas";
+import { anotarScoreLab } from "@/server/agent/versions";
 import { rolDe } from "@/lib/agent-roles";
 
 /**
@@ -225,6 +226,8 @@ async function runAllCases(
     })
     .where(eq(schema.agentTestRun.id, runId));
   publishProgress(organizationId, runId, "done", done, total, score);
+  // El score queda anotado en la versión del agente que se acaba de probar.
+  await anotarScoreLab(organizationId, score).catch(() => null);
 }
 
 /** Conversa el guion completo contra el agente real; corta al primer handoff. */
