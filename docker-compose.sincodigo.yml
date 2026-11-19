@@ -15,6 +15,10 @@ services:
       # Embedded Signup (Tech Provider): el compose oficial no los pasa.
       META_APP_ID: ${META_APP_ID:-}
       META_EMBEDDED_CONFIG_ID: ${META_EMBEDDED_CONFIG_ID:-}
+      # Avisos push de citas (Web Push). Llaves: node scripts/sincodigo/vapid-keys.mjs
+      VAPID_PUBLIC_KEY: ${VAPID_PUBLIC_KEY:-}
+      VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY:-}
+      VAPID_SUBJECT: ${VAPID_SUBJECT:-}
   nea:
     environment:
       # Números que pueden mandar /reset para empezar como lead nuevo (CSV).
