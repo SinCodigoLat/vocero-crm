@@ -10,6 +10,8 @@ import { agendaEnabled } from "@/server/agenda/flag";
 import { enabledChannels } from "@/server/channels/enabled";
 import { navKicker } from "@/lib/channels";
 import { avisoIaDe } from "@/server/ai/aviso";
+import { ChatFlotante } from "@/components/agent/chat-flotante";
+import { leerConfigDespacho } from "@/server/brains/config";
 import { AvisoIaBanner } from "@/components/avisos/aviso-ia";
 
 export default async function AppLayout({
@@ -46,6 +48,7 @@ export default async function AppLayout({
       aviso={<AvisoIaBanner aviso={aviso} />}
     >
       {children}
+      {leerConfigDespacho().active && <ChatFlotante />}
     </AppShell>
   );
 }
