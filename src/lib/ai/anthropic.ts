@@ -10,7 +10,7 @@ import { esAnthropic } from "@/lib/ai/presets";
 export const ANTHROPIC_MAX_TOKENS = 4096;
 
 export function adaptarCuerpoParaProveedor(baseUrl: string, cuerpo: string): string {
-  if (!esAnthropic(baseUrl)) return cuerpo;
+  const anthropic = esAnthropic(baseUrl);
   let json: Record<string, unknown>;
   try {
     const parsed: unknown = JSON.parse(cuerpo);
@@ -19,9 +19,17 @@ export function adaptarCuerpoParaProveedor(baseUrl: string, cuerpo: string): str
   } catch {
     return cuerpo;
   }
-  if (json.max_tokens == null && json.max_completion_tokens == null) {
+  // Con cualquier proveedor: sin tope explícito, OpenRouter pide el máximo del
+  // modelo (65536) y una llave con límite devuelve 402.
+  // Solo en chat (otras rutas, p. ej. embeddings, no llevan messages).
+  if (
+    Array.isArray(json.messages) &&
+    json.max_tokens == null &&
+    json.max_completion_tokens == null
+  ) {
     json.max_tokens = ANTHROPIC_MAX_TOKENS;
   }
+  if (!anthropic) return JSON.stringify(json);
   const rf = json.response_format as { type?: string } | undefined;
   if (rf && rf.type !== "json_schema") delete json.response_format;
   if (json.tool_choice === "required") json.tool_choice = "auto";

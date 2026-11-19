@@ -29,9 +29,14 @@ describe("Anthropic como proveedor", () => {
     expect(out.top_p).toBeUndefined();
   });
 
-  it("no toca el cuerpo de otros proveedores", () => {
-    const cuerpo = JSON.stringify({ model: "x", response_format: { type: "json_object" } });
+  it("en otros proveedores solo añade max_tokens si falta", () => {
+    const cuerpo = JSON.stringify({ model: "x", response_format: { type: "json_object" }, max_tokens: 100 });
     expect(adaptarCuerpoParaProveedor("https://openrouter.ai/api", cuerpo)).toBe(cuerpo);
+    const sin = JSON.parse(
+      adaptarCuerpoParaProveedor("https://openrouter.ai/api", JSON.stringify({ model: "x", messages: [], response_format: { type: "json_object" } }))
+    );
+    expect(sin.max_tokens).toBe(4096);
+    expect(sin.response_format).toEqual({ type: "json_object" });
   });
 
   it("un 400 por saldo bajo se clasifica como sin saldo", () => {

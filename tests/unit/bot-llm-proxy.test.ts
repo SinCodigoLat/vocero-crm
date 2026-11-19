@@ -86,7 +86,7 @@ describe("/api/bot/llm — el reenvío", () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
     expect(url).toBe("https://proveedor.test/api/v1/chat/completions");
-    expect(init.body).toBe(CUERPO);
+    expect(JSON.parse(init.body as string)).toEqual({ ...JSON.parse(CUERPO), max_tokens: 4096 });
     expect((init.headers as Record<string, string>).Authorization).toBe(`Bearer ${LLAVE_IA}`);
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ choices: [{ message: { content: "hola!" } }] });
