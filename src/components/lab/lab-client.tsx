@@ -24,6 +24,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { ChatLibre } from "@/components/lab/chat-libre";
 import { GUIA_DEL_PAR_URL } from "@/lib/guia-del-par";
 
 type Run = {
@@ -217,6 +218,10 @@ export function LabClient() {
           </div>
         </div>
       )}
+
+      <div className="px-4 pt-4 sm:px-6 sm:pt-6">
+        <ChatLibre disabled={!brainConnected} />
+      </div>
 
       <div className="grid gap-4 p-4 sm:gap-6 sm:p-6 lg:grid-cols-[280px_1fr]">
         <HistoryList

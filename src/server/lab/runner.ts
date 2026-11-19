@@ -406,7 +406,7 @@ async function turnoPorDespacho(
 }
 
 /** 033 — Que el cerebro olvide la conversación de prueba al terminar el caso. */
-async function olvidar(
+export async function olvidar(
   organizationId: string,
   conversationId: string,
   contactId: string
@@ -441,9 +441,9 @@ async function olvidar(
 
 const dormir = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-async function upsertTestContact(
+export async function upsertTestContact(
   organizationId: string,
-  persona: Persona
+  persona: Pick<Persona, "phone" | "contactName">
 ): Promise<string> {
   const db = getDb();
   const inserted = await db
