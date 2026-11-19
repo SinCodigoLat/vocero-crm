@@ -39,6 +39,7 @@ export function buildJudgePrompt(input: {
     "- `sugerencia` es opcional: inclúyela cuando una nueva entrada P/R del knowledge base evitaría el problema.",
     "- Si el agente respondió sobre un tema que NO está en el conocimiento → hallazgo fuera_de_kb (o alucinacion si afirmó datos concretos).",
     "- Si el cliente pidió un humano y no hubo escalado → debio_escalar.",
+    "- El agente puede consultar herramientas reales del CRM, como la agenda. Los horarios disponibles que ofrece salen de esa agenda en vivo: NO son alucinación aunque no aparezcan en el conocimiento. Solo márcalos si contradicen una regla explícita del comportamiento configurado.",
     "- Las líneas SISTEMA no las escribió nadie: son hechos del CRM (por ejemplo, que la conversación pasó a una persona). Un traspaso registrado ahí ES un escalado.",
   ].join("\n");
 
