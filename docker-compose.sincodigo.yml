@@ -11,5 +11,9 @@ services:
     build: .
     ports:
       - "172.17.0.1:3210:3000"
+    environment:
+      # Embedded Signup (Tech Provider): el compose oficial no los pasa.
+      META_APP_ID: ${META_APP_ID:-}
+      META_EMBEDDED_CONFIG_ID: ${META_EMBEDDED_CONFIG_ID:-}
   caddy:
     profiles: ["disabled"]
