@@ -488,6 +488,25 @@ function AyudaLlave({ provider }: { provider: AiProviderId }) {
           </li>
           <li>Pégala aquí, pulsa «Probar conexión» y luego «Guardar».</li>
         </ol>
+      ) : provider === "anthropic" ? (
+        <ol className="mt-3 list-decimal space-y-2 pl-5 text-muted-foreground">
+          <li>
+            Entra a{" "}
+            <a className="underline" href="https://console.anthropic.com" target="_blank" rel="noopener noreferrer">
+              console.anthropic.com
+            </a>{" "}
+            con la cuenta del negocio.
+          </li>
+          <li>
+            En Billing, carga saldo. El consumo se cobra ahí. Para gastar poco, usa{" "}
+            <code className="font-mono">claude-haiku-5-5</code>.
+          </li>
+          <li>
+            En API keys → Create key, copia la llave (empieza con{" "}
+            <code className="font-mono">sk-ant-</code>).
+          </li>
+          <li>Pégala aquí, pulsa «Probar conexión» y luego «Guardar».</li>
+        </ol>
       ) : (
         <ol className="mt-3 list-decimal space-y-2 pl-5 text-muted-foreground">
           <li>En el panel de tu proveedor, crea una API key con permiso para chat completions.</li>

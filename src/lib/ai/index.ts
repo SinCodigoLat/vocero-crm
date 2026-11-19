@@ -1,3 +1,4 @@
+import { adaptarCuerpoParaProveedor } from "@/lib/ai/anthropic";
 import type { z } from "zod";
 import { chatCompletionsUrl } from "@/lib/ai/presets";
 import {
@@ -172,7 +173,10 @@ async function callProvider(
         Authorization: `Bearer ${provider.token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ model, messages }),
+      body: adaptarCuerpoParaProveedor(
+        provider.baseUrl,
+        JSON.stringify({ model, messages })
+      ),
       signal: controller.signal,
     });
     if (!res.ok) {

@@ -129,7 +129,8 @@ export function clasificarFallo(
       message: `El proveedor rechazó la llave (${status})${detalle}`,
     };
   }
-  if (status === 402) {
+  // Anthropic no usa 402: avisa del saldo con un 400 «credit balance is too low».
+  if (status === 402 || (status === 400 && /credit balance/i.test(body))) {
     return {
       ok: false,
       code: "no_credit",
@@ -257,11 +258,16 @@ export async function listModels(input: {
     const modelos = json.data
       .map((m) => {
         if (!m || typeof m !== "object") return null;
-        const r = m as { id?: unknown; name?: unknown };
+        const r = m as { id?: unknown; name?: unknown; display_name?: unknown };
         if (typeof r.id !== "string" || !r.id.trim()) return null;
         return {
           id: r.id.trim(),
-          nombre: typeof r.name === "string" && r.name.trim() ? r.name.trim() : null,
+          nombre:
+            typeof r.name === "string" && r.name.trim()
+              ? r.name.trim()
+              : typeof r.display_name === "string" && r.display_name.trim()
+                ? r.display_name.trim()
+                : null,
         };
       })
       .filter((m): m is { id: string; nombre: string | null } => m !== null)

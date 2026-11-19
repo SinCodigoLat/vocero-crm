@@ -1,3 +1,4 @@
+import { adaptarCuerpoParaProveedor } from "@/lib/ai/anthropic";
 import { apiRoot } from "@/lib/ai/presets";
 import { resolveAiProvider } from "@/lib/ai/provider";
 import { marcarEstadoPorRespuesta } from "@/server/ai/credentials";
@@ -60,7 +61,7 @@ export async function pensarPorElCerebro(input: {
         Authorization: `Bearer ${provider.token}`,
         "Content-Type": input.contentType ?? "application/json",
       },
-      body: input.cuerpoCrudo,
+      body: adaptarCuerpoParaProveedor(provider.baseUrl, input.cuerpoCrudo),
       signal: controller.signal,
     });
     const cuerpo = await res.text();

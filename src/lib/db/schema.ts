@@ -1174,7 +1174,7 @@ export const aiCredentials = pgTable(
       .notNull()
       .references(() => organization.id, { onDelete: "cascade" }),
     /** Preset de la UI; `base_url` es lo que de verdad identifica al proveedor. */
-    provider: text("provider", { enum: ["openrouter", "openai_compatible"] })
+    provider: text("provider", { enum: ["openrouter", "anthropic", "openai_compatible"] })
       .notNull()
       .default("openrouter"),
     baseUrl: text("base_url").notNull(),

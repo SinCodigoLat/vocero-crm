@@ -9,8 +9,9 @@
  */
 
 export const OPENROUTER_BASE_URL = "https://openrouter.ai/api";
+export const ANTHROPIC_BASE_URL = "https://api.anthropic.com";
 
-export const AI_PROVIDERS = ["openrouter", "openai_compatible"] as const;
+export const AI_PROVIDERS = ["openrouter", "anthropic", "openai_compatible"] as const;
 export type AiProviderId = (typeof AI_PROVIDERS)[number];
 
 export const AI_STATUSES = [
@@ -37,6 +38,13 @@ export const AI_PROVIDER_PRESETS: Record<AiProviderId, AiProviderPreset> = {
     modelPlaceholder: "anthropic/claude-sonnet-4.5",
     tokenPlaceholder: "sk-or-…",
   },
+  anthropic: {
+    id: "anthropic",
+    label: "Claude (Anthropic)",
+    baseUrl: ANTHROPIC_BASE_URL,
+    modelPlaceholder: "claude-haiku-5-5",
+    tokenPlaceholder: "sk-ant-…",
+  },
   openai_compatible: {
     id: "openai_compatible",
     label: "Otro compatible con OpenAI",
@@ -54,9 +62,15 @@ export const AI_STATUS_LABEL: Record<AiStatus, string> = {
 
 /** A qué preset corresponde una base URL (la del entorno o una guardada). */
 export function presetDeBaseUrl(baseUrl: string): AiProviderId {
-  return apiRoot(baseUrl) === apiRoot(OPENROUTER_BASE_URL)
-    ? "openrouter"
-    : "openai_compatible";
+  const raiz = apiRoot(baseUrl);
+  if (raiz === apiRoot(OPENROUTER_BASE_URL)) return "openrouter";
+  if (raiz === apiRoot(ANTHROPIC_BASE_URL)) return "anthropic";
+  return "openai_compatible";
+}
+
+/** ¿Es la API de Anthropic? Su capa OpenAI-compatible es más estricta. */
+export function esAnthropic(baseUrl: string): boolean {
+  return apiRoot(baseUrl) === apiRoot(ANTHROPIC_BASE_URL);
 }
 
 /**
