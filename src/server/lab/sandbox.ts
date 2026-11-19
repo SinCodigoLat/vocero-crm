@@ -1,6 +1,7 @@
 import { and, eq } from "drizzle-orm";
 import { getDb, schema } from "@/lib/db";
 import { newId } from "@/lib/db/ids";
+import { extraerOpciones, textoConViñetas } from "@/lib/botones-whatsapp";
 
 /**
  * Sandbox del Laboratorio: la respuesta del agente a una conversación de
@@ -24,7 +25,12 @@ export async function guardarRespuestaDePrueba(params: {
     conversationId: params.conversationId,
     direction: "out",
     type: "text",
-    text: params.text,
+    // SinCódigo — en la prueba, las opciones de `[opciones: …]` se ven como
+    // viñetas: es el texto que guarda el hilo real.
+    text: (() => {
+      const op = extraerOpciones(params.text);
+      return op ? textoConViñetas(op) : params.text;
+    })(),
     status: "sent",
     aiGenerated: true,
     origin: "ai",

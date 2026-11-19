@@ -11,6 +11,11 @@ import {
 } from "@/server/whatsapp/credentials";
 import { isWindowOpen, replyWindow } from "@/server/inbox/window";
 import { plainSocialText } from "@/lib/social-text";
+import {
+  extraerOpciones,
+  interactivoPara,
+  textoConViñetas,
+} from "@/lib/botones-whatsapp";
 import { IG_PREFIX } from "@/server/inbox/identity";
 import {
   getInstagramCredentialsByOrg,
@@ -476,10 +481,20 @@ export async function sendText(input: {
   // canal que no lo dibuja se le quitan las marcas ANTES de medir, enviar y
   // guardar: lo que queda en el hilo es lo que el cliente leyó. Lo que escribe
   // una persona no se toca.
+  // SinCódigo — la IA puede cerrar con `[opciones: A | B]`: por WhatsApp sale
+  // como botones o lista (`src/lib/botones-whatsapp.ts`); si no caben, o en
+  // otro canal, como viñetas. En el hilo queda el texto con las viñetas.
+  const conOpciones = input.aiGenerated ? extraerOpciones(input.text) : null;
+  const esWhatsApp =
+    !target.instagram && !target.messenger && !target.tiktok && Boolean(credentials);
+  const interactivo =
+    conOpciones && esWhatsApp ? interactivoPara(conOpciones) : null;
+  const textoBase = conOpciones ? textoConViñetas(conOpciones) : input.text;
+
   const text =
     input.aiGenerated && capabilitiesFor(canal).textFormat === "plain"
-      ? plainSocialText(input.text)
-      : input.text;
+      ? plainSocialText(textoBase)
+      : textoBase;
 
   // 022: el límite de longitud es del canal. WhatsApp y TikTok lo declaran en
   // caracteres y se comprueba aquí, antes de llamar a nadie; Instagram y
@@ -499,12 +514,19 @@ export async function sendText(input: {
         : await callGraphSend(
           credentials!,
           conCita(
-            {
-              messaging_product: "whatsapp",
-              ...target.destinatario,
-              type: "text",
-              text: { body: text },
-            },
+            interactivo
+              ? {
+                  messaging_product: "whatsapp",
+                  ...target.destinatario,
+                  type: "interactive",
+                  interactive: interactivo,
+                }
+              : {
+                  messaging_product: "whatsapp",
+                  ...target.destinatario,
+                  type: "text",
+                  text: { body: text },
+                },
             cita?.message.waMessageId
           )
         );
