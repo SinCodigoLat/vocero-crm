@@ -1,0 +1,15 @@
+# Override de SinCódigo para el VPS (Contabo + EasyPanel/Traefik).
+# Traefik ya ocupa 80/443, así que NO se usa Caddy: la app se publica solo en
+# el puente de Docker (172.17.0.1:3210) y Traefik la enruta con TLS.
+#
+# Uso en el VPS (/root/vocero-crm):
+#   docker compose -f docker-compose.yml -f docker-compose.sincodigo.yml up -d --build
+services:
+  app:
+    # Imagen propia construida desde el fork (nunca la oficial).
+    image: vocero-crm-sincodigo:latest
+    build: .
+    ports:
+      - "172.17.0.1:3210:3000"
+  caddy:
+    profiles: ["disabled"]
