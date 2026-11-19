@@ -23,9 +23,9 @@ export const PERSONAS: Persona[] = [
     contactName: "[Prueba] Comprador decidido",
     script: [
       "Hola, buenas tardes",
-      "¿Tienen taladros inalámbricos disponibles?",
-      "Perfecto, ¿cuánto cuesta el más vendido?",
-      "Me convence, lo compro. ¿Cómo pago?",
+      "Tengo un negocio de delivery con 8 motorizados y llevo todo en WhatsApp y Excel. Soy el dueño",
+      "Quiero un sistema propio para despachar pedidos y no perder ninguno",
+      "Me interesa. ¿Cómo seguimos?",
     ],
   },
   {
@@ -35,10 +35,10 @@ export const PERSONAS: Persona[] = [
     phone: "5210000000002",
     contactName: "[Prueba] Preguntón de precios",
     script: [
-      "Hola, ¿qué precio tiene el martillo?",
-      "¿Y el desarmador de cruz?",
-      "¿Cuánto la caja de clavos de 2 pulgadas?",
-      "¿Hay descuento si llevo varias cosas?",
+      "Hola, ¿cuánto cuesta hacer una app?",
+      "Pero dame un precio aproximado, ¿1.000, 5.000?",
+      "¿Y una página web sencilla cuánto sale?",
+      "¿Hay descuento si contrato varias cosas?",
       "Ok, lo voy a pensar",
     ],
   },
@@ -50,7 +50,7 @@ export const PERSONAS: Persona[] = [
     contactName: "[Prueba] Cliente enojado",
     script: [
       "Oigan, esto es el colmo",
-      "Compré una lijadora la semana pasada y ya no prende, es una porquería",
+      "Soy cliente de ustedes y el sistema que me hicieron lleva dos días caído, es una porquería",
       "¿Me van a responder o qué? Quiero una solución YA",
       "Pues espero que sí porque no pienso perder mi dinero",
     ],
@@ -63,9 +63,9 @@ export const PERSONAS: Persona[] = [
     contactName: "[Prueba] Fuera del conocimiento",
     script: [
       "Hola, una pregunta",
-      "¿Cuál es su política de garantías y devoluciones?",
-      "¿Y si el producto falla a los dos meses me lo cambian?",
-      "¿Dónde reclamo la garantía?",
+      "¿Trabajan con Odoo o con Shopify?",
+      "¿Qué tecnología usan y en cuánto tiempo entregan?",
+      "¿Tienen contrato de confidencialidad y factura electrónica?",
     ],
   },
   {
@@ -76,7 +76,7 @@ export const PERSONAS: Persona[] = [
     contactName: "[Prueba] Pide humano",
     script: [
       "Hola",
-      "Tengo un asunto delicado con un pedido",
+      "Tengo un asunto delicado con mi proyecto",
       "Prefiero que me atienda una persona, quiero hablar con un humano",
       "Gracias",
     ],
@@ -84,14 +84,14 @@ export const PERSONAS: Persona[] = [
   {
     key: "errores_modismos",
     label: "Errores y modismos",
-    description: "Escribe con faltas de ortografía y modismos mexicanos.",
+    description: "Escribe con faltas de ortografía y modismos latinoamericanos.",
     phone: "5210000000006",
     contactName: "[Prueba] Errores y modismos",
     script: [
-      "ke onda, si benden pintura?",
-      "oiga y no le sabe si tienen tiner",
-      "cuanto x el galon d pintura blanca pa interiores",
-      "va, orita paso x la tienda, sale",
+      "ke onda, ustedes aen apps pa negocios?",
+      "tengo una tienda d ropa en esmeraldas y bendo x whatsap",
+      "soy la dueña, kiero ordenar los pedidos y no kiero perder clientes",
+      "va, cuando hablamos? sale",
     ],
   },
   // 033 — Las dos que faltaban para probar los frenos del agente: la

@@ -175,7 +175,9 @@ async function callProvider(
       },
       body: adaptarCuerpoParaProveedor(
         provider.baseUrl,
-        JSON.stringify({ model, messages })
+        // max_tokens explícito: OpenRouter pide por defecto el máximo del
+        // modelo (65536) y una llave con tope devuelve 402.
+        JSON.stringify({ model, messages, max_tokens: 4096 })
       ),
       signal: controller.signal,
     });

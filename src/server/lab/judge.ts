@@ -11,7 +11,9 @@ export const Verdict = z.object({
       evidencia: z.string(),
       sugerencia: z
         .object({ pregunta: z.string(), respuesta: z.string() })
-        .optional(),
+        .nullish()
+        // Algunos modelos mandan null en vez de omitir el campo.
+        .transform((v) => v ?? undefined),
     })
   ),
 });
