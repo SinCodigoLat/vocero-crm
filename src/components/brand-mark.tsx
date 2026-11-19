@@ -64,8 +64,13 @@ export function BrandTile({
   return (
     <span
       className={cn(
-        "brand-tile flex shrink-0 items-center justify-center overflow-hidden text-brand-fg",
-        className
+        // Con logo subido NO hay mosaico de color detrás: el logo se ve tal
+        // cual, con su fondo transparente (el mosaico es solo para la "v" de
+        // Vocero o la inicial del nombre).
+        "flex shrink-0 items-center justify-center overflow-hidden text-brand-fg",
+        !branding.favicon && "brand-tile",
+        className,
+        branding.favicon && "rounded-none"
       )}
       aria-hidden
     >

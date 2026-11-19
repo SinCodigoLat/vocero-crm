@@ -463,7 +463,9 @@ function Riel({
       <Link href="/inbox" aria-label={branding.name} title={branding.name} className="rounded-[14px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
         <BrandTile branding={branding} className="h-11 w-11 rounded-[14px] text-[18px]" />
       </Link>
-      <div className="mt-7 flex min-h-0 flex-1 flex-col items-center gap-2.5 overflow-y-auto">
+      {/* px/pt: el scroll vertical recorta lo que sobresale; sin este margen el
+          globo de no leídos (-right-1 -top-1) queda cortado. */}
+      <div className="mt-7 flex min-h-0 w-full flex-1 flex-col items-center gap-2.5 overflow-y-auto px-2 pt-2">
         {groups.map((g, i) => (
           <div key={g.title ?? i} className="flex flex-col items-center gap-2.5">
             {i > 0 && <span className="my-0.5 h-px w-6 bg-border" aria-hidden />}
