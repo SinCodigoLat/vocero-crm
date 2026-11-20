@@ -2,6 +2,7 @@ import { withAuth } from "@/lib/api";
 import { getSql } from "@/lib/db";
 import { labelInTz } from "@/lib/time/slots";
 import { getSettings } from "@/server/agenda/settings";
+import { avisoPendiente } from "@/server/push/enviar";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +12,8 @@ export const dynamic = "force-dynamic";
  * real (no del Laboratorio) creada en los últimos 15 minutos.
  */
 export const GET = withAuth(async (session) => {
+  const aviso = avisoPendiente(session.organizationId);
+  if (aviso) return Response.json({ titulo: aviso.titulo, cuerpo: aviso.cuerpo, url: aviso.url });
   const rows = await getSql()<{ scheduled_at: Date; name: string | null; source: string }[]>`
     select b.scheduled_at, c.name, b.source
     from booking b left join contact c on c.id = b.contact_id

@@ -1,4 +1,5 @@
 import { and, eq, sql } from "drizzle-orm";
+import { avisarMensaje } from "@/server/push/enviar";
 import { getDb, schema } from "@/lib/db";
 import { newId } from "@/lib/db/ids";
 import { scoped } from "@/lib/db/tenant";
@@ -552,6 +553,20 @@ export async function ingestInboundMessage(input: {
     type: "conversation.updated",
     data: { conversation: { id: conversation.id } },
   });
+
+  // Fork SinCódigo — aviso push del mensaje entrante (no del Laboratorio).
+  if (!conversation.isTest) {
+    try {
+      avisarMensaje({
+        organizationId,
+        conversationId: conversation.id,
+        nombre: contact.name ?? "",
+        texto: input.text ?? (input.media ? "Archivo adjunto" : ""),
+      });
+    } catch (err) {
+      console.warn(`[push] aviso de mensaje falló: ${err}`);
+    }
+  }
 
   // 036 — Quien contesta es el cerebro conectado; sin él, una persona. El
   // 025: `message.id` es lo que el despacho le debe al cerebro.

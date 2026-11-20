@@ -106,7 +106,7 @@ self.addEventListener("push", (event) => {
       }
       await self.registration.showNotification(aviso.titulo, {
         body: aviso.cuerpo,
-        tag: "cita",
+        tag: aviso.url || "aviso",
         renotify: true,
         icon: "/api/branding/app-icon?size=192",
         data: { url: aviso.url },

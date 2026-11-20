@@ -3,7 +3,7 @@ import { getDb, schema } from "@/lib/db";
 import { newId } from "@/lib/db/ids";
 import { scoped } from "@/lib/db/tenant";
 import { labelInTz } from "@/lib/time/slots";
-import { avisarATodos } from "@/server/push/enviar";
+import { avisarCita } from "@/server/push/enviar";
 import { CONNECTOR_META, type ConnectorId } from "@/lib/agenda-connectors";
 import {
   computeAvailability,
@@ -245,9 +245,17 @@ export async function createSessionBooking(input: {
   // Fork SinCódigo: aviso push a los dispositivos del negocio (no por citas
   // del Laboratorio). Sin esperar: el aviso nunca demora la confirmación.
   if (!isTest) {
-    void avisarATodos(input.organizationId).catch((err) => {
+    try {
+      avisarCita(input.organizationId, {
+        titulo: "Nueva cita",
+        cuerpo: `${contactName || "Un cliente"} · ${labelInTz(slot.startUtc, settings.timezone)}${
+          input.source === "ai" ? " (la agendó el agente)" : ""
+        }`,
+        url: "/bookings",
+      });
+    } catch (err) {
       console.warn(`[agenda] aviso push falló: ${err}`);
-    });
+    }
   }
 
   return {
