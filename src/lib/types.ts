@@ -36,6 +36,8 @@ export type ConversationDto = {
     /** `post` si fue una publicación y no un anuncio. */
     sourceType: string | null;
   } | null;
+  /** Fork SinCódigo: la línea de negocio que anotó el cerebro (`ficha.negocio`). */
+  negocio: string | null;
 };
 
 /** 018 — De qué anuncio llegó un contacto, como lo ve la bandeja. */

@@ -16,6 +16,7 @@ import { EVENTO_BORRADOR, leerBorrador } from "@/lib/borradores";
 import { atajoBandeja, esCampoDeTexto, sirveEscribiendo, vecina } from "@/lib/atajos";
 import { hayDialogoAbierto } from "@/components/atajos-globales";
 import { etiquetaVence, porVencer } from "@/lib/filtros-bandeja";
+import { etiquetaNegocio } from "@/lib/negocios";
 
 /* Puntos de etapa: los tokens del tema, no hex copiados del tema claro —
    así siguen al acento white-label y se recalculan en oscuro. */
@@ -119,6 +120,8 @@ export function ConversationList({
     };
   }, [menuFiltros]);
   const [stage, setStage] = useState<string>("all");
+  // Fork SinCódigo: varias líneas de negocio en un mismo número (`ficha.negocio`).
+  const [negocio, setNegocio] = useState<string>("all");
   const [inbox, setInbox] = useState<Channel | "all">("all");
   const inputRef = useRef<HTMLInputElement>(null);
   // 055 · D3 — Alt+J / Alt+K recorren la lista en el orden que se ve (con los
@@ -177,7 +180,9 @@ export function ConversationList({
       matchesQuery(query, {
         text: [c.contact.name],
         phone: c.contact.phone,
-      }) && (stage === "all" || c.stageName === stage)
+      }) &&
+      (stage === "all" || c.stageName === stage) &&
+      (negocio === "all" || c.negocio === negocio)
   );
   // La bandeja elegida es el filtro de AFUERA: "Todas" y "No leídas" cuentan
   // dentro de ella, no sobre la suma de los dos canales.
@@ -201,9 +206,14 @@ export function ConversationList({
     { id: "all", label: "Todas", count: filtrado.length },
     { id: "unread", label: "No leídas", count: unreadCount },
   ];
-  const nFiltros = (stage !== "all" ? 1 : 0) + (soloPorVencer ? 1 : 0) + (soloAnuncios ? 1 : 0);
+  const nFiltros =
+    (stage !== "all" ? 1 : 0) +
+    (negocio !== "all" ? 1 : 0) +
+    (soloPorVencer ? 1 : 0) +
+    (soloAnuncios ? 1 : 0);
   function limpiarFiltros() {
     setStage("all");
+    setNegocio("all");
     setSoloPorVencer(false);
     setSoloAnuncios(false);
   }
@@ -216,6 +226,13 @@ export function ConversationList({
   for (const c of conversations) {
     if (c.stageName && !stages.includes(c.stageName)) stages.push(c.stageName);
   }
+  // Negocios presentes; con uno solo (o ninguno) no hay nada que distinguir.
+  const negocios: string[] = [];
+  for (const c of conversations) {
+    if (c.negocio && !negocios.includes(c.negocio)) negocios.push(c.negocio);
+  }
+  negocios.sort((a, b) => etiquetaNegocio(a).localeCompare(etiquetaNegocio(b), "es"));
+  const multiNegocio = negocios.length > 1;
 
   function clearQuery() {
     if (inputRef.current) inputRef.current.value = "";
@@ -358,6 +375,27 @@ export function ConversationList({
                     </select>
                   </label>
                 )}
+                {(negocios.length > 0 || negocio !== "all") && (
+                  <label className="block space-y-1">
+                    <span className="kicker text-text-3">Negocio</span>
+                    <select
+                      value={negocio}
+                      onChange={(e) => setNegocio(e.target.value)}
+                      aria-label="Filtrar por negocio"
+                      className={cn(
+                        "w-full rounded-md border border-border-strong bg-background px-2 py-1.5 text-[13px]",
+                        FOCO_SEPARADO
+                      )}
+                    >
+                      <option value="all">Todo negocio</option>
+                      {negocios.map((n) => (
+                        <option key={n} value={n}>
+                          {etiquetaNegocio(n)}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
                 {/* Como antes: sin ninguna, la casilla no aparece (salvo que esté marcada). */}
                 {(venciendo.length > 0 || soloPorVencer) && (
                   <label className="flex cursor-pointer items-center gap-2 text-[13px]">
@@ -383,7 +421,7 @@ export function ConversationList({
                     <span className="font-mono text-[11px] text-text-3">{deAnuncios.length}</span>
                   </label>
                 )}
-                {stages.length === 0 && venciendo.length === 0 && deAnuncios.length === 0 && nFiltros === 0 && (
+                {stages.length === 0 && negocios.length === 0 && venciendo.length === 0 && deAnuncios.length === 0 && nFiltros === 0 && (
                   <p className="text-[13px] text-text-3">Todavía no hay nada por qué filtrar.</p>
                 )}
                 {nFiltros > 0 && (
@@ -404,6 +442,12 @@ export function ConversationList({
           <div className="flex flex-wrap gap-1.5 pb-2.5">
             {stage !== "all" && (
               <FiltroPuesto texto={`Etapa: ${stage}`} onQuitar={() => setStage("all")} />
+            )}
+            {negocio !== "all" && (
+              <FiltroPuesto
+                texto={`Negocio: ${etiquetaNegocio(negocio)}`}
+                onQuitar={() => setNegocio("all")}
+              />
             )}
             {soloPorVencer && (
               <FiltroPuesto texto="Por vencer" onQuitar={() => setSoloPorVencer(false)} />
@@ -503,6 +547,14 @@ export function ConversationList({
                         )}
                       </span>
                       <span className="mt-1.5 flex items-center gap-1.5">
+                        {multiNegocio && c.negocio && (
+                          <span
+                            data-negocio
+                            className="inline-flex shrink-0 items-center rounded-full border border-border-strong bg-subtle px-2 py-0.5 text-[11px] font-semibold text-text-2"
+                          >
+                            {etiquetaNegocio(c.negocio)}
+                          </span>
+                        )}
                         {c.stageName && (
                           <span className="inline-flex items-center gap-1.5 rounded-full border border-border-strong bg-chip px-2 py-0.5 text-[11px] font-medium text-text-2">
                             <span

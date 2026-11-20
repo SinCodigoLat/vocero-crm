@@ -4,6 +4,7 @@ import { scoped } from "@/lib/db/tenant";
 import { isWindowOpen, replyWindow, windowRemainingMs } from "@/server/inbox/window";
 import { capabilitiesFor, windowMsFor } from "@/server/channels/capabilities";
 import type { ConversationDto } from "@/lib/types";
+import { negocioDeFicha } from "@/lib/negocios";
 
 /**
  * 018 — El anuncio de origen viaja con la conversación. La llave única
@@ -192,6 +193,7 @@ export function serializeConversation(
     },
     preview,
     anuncio,
+    negocio: negocioDeFicha(contact.ficha),
   };
 }
 
