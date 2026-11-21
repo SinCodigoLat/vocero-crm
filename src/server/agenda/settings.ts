@@ -38,6 +38,8 @@ export type CalendarSettings = {
   bufferMinutes: number;
   minNoticeHours: number;
   maxDaysAhead: number;
+  /** Fork SinCódigo: `maxDaysAhead` cuenta solo los días que atiende (lib/agenda-horizonte). */
+  soloDiasHabiles: boolean;
   timezone: string;
   /** Cómo se entrega la reunión. */
   connector: ConnectorId;
@@ -52,6 +54,7 @@ export const DEFAULT_CALENDAR_SETTINGS: CalendarSettings = {
   bufferMinutes: 0,
   minNoticeHours: 2,
   maxDaysAhead: 7,
+  soloDiasHabiles: false,
   timezone: DEFAULT_TIMEZONE,
   connector: DEFAULT_CONNECTOR,
   meetingLink: null,
@@ -84,6 +87,7 @@ export async function getSettings(
     bufferMinutes: row.bufferMinutes,
     minNoticeHours: row.minNoticeHours,
     maxDaysAhead: row.maxDaysAhead,
+    soloDiasHabiles: row.soloDiasHabiles,
     timezone: row.timezone,
     // Un conector que ya no existe en el código (p. ej. venías de un fork) no
     // puede dejar la agenda inservible: se degrada al soberano.
@@ -153,6 +157,7 @@ export async function upsertSettings(
       LIMITS.maxDaysAhead.min,
       LIMITS.maxDaysAhead.max
     ),
+    soloDiasHabiles: typeof input.soloDiasHabiles === "boolean" ? input.soloDiasHabiles : current.soloDiasHabiles,
     timezone,
     connector,
     meetingLink: normalizeLink(
@@ -167,6 +172,7 @@ export async function upsertSettings(
     bufferMinutes: next.bufferMinutes,
     minNoticeHours: next.minNoticeHours,
     maxDaysAhead: next.maxDaysAhead,
+    soloDiasHabiles: next.soloDiasHabiles,
     timezone: next.timezone,
     connector: next.connector,
     meetingLink: next.meetingLink,

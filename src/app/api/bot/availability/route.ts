@@ -1,10 +1,11 @@
 import { eq } from "drizzle-orm";
+import { ultimoDiaAgendable } from "@/lib/agenda-horizonte";
 import { getDb, schema } from "@/lib/db";
 import { apiError } from "@/lib/api";
 import { scoped } from "@/lib/db/tenant";
 import { requireBotKey, resolveInstanceOrg } from "@/server/bot/auth";
 import { agendaDisabledResponse, agendaEnabled } from "@/server/agenda/flag";
-import { addDaysISO, todayInTz } from "@/lib/time/slots";
+import { todayInTz } from "@/lib/time/slots";
 import {
   buildCandidateSlots,
   computeAvailability,
@@ -102,7 +103,7 @@ export async function GET(req: Request) {
   const hoy = todayInTz(now, settings.timezone);
   // Un día fuera de lo agendable ni se calcula: no hay nada que buscar.
   const dentro =
-    !date || (date >= hoy && date <= addDaysISO(hoy, settings.maxDaysAhead));
+    !date || (date >= hoy && date <= ultimoDiaAgendable(hoy, settings));
   const todos = dentro
     ? await computeAvailability(organizationId, {
         settings,
@@ -115,6 +116,7 @@ export async function GET(req: Request) {
     timezone: settings.timezone,
     now,
     maxDaysAhead: settings.maxDaysAhead,
+    horizonEnd: ultimoDiaAgendable(hoy, settings),
     limit,
     perDay,
     days,

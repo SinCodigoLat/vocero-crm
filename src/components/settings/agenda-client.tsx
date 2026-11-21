@@ -34,6 +34,7 @@ type Settings = {
   bufferMinutes: number;
   minNoticeHours: number;
   maxDaysAhead: number;
+  soloDiasHabiles?: boolean;
   timezone: string;
   connector: ConnectorId;
   meetingLink: string | null;
@@ -139,6 +140,7 @@ export function AgendaClient() {
         bufferMinutes: settings.bufferMinutes,
         minNoticeHours: settings.minNoticeHours,
         maxDaysAhead: settings.maxDaysAhead,
+        soloDiasHabiles: settings.soloDiasHabiles ?? false,
         timezone: settings.timezone.trim(),
         connector: settings.connector,
         meetingLink: settings.meetingLink?.trim()
@@ -285,6 +287,15 @@ export function AgendaClient() {
               value={settings.maxDaysAhead}
               onChange={(e) => patch({ maxDaysAhead: Number(e.target.value) })}
             />
+            <label className="flex cursor-pointer items-center gap-2 pt-1 text-[12.5px] text-text-2">
+              <input
+                type="checkbox"
+                checked={settings.soloDiasHabiles ?? false}
+                onChange={(e) => patch({ soloDiasHabiles: e.target.checked })}
+                className="h-4 w-4 accent-[var(--accent)]"
+              />
+              Contar solo los días que atiendes
+            </label>
           </div>
           <div className="col-span-2 space-y-1.5">
             <Label htmlFor="tz">Zona horaria</Label>

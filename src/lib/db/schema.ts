@@ -853,6 +853,8 @@ export const calendarSettings = pgTable(
     bufferMinutes: integer("buffer_minutes").notNull().default(0),
     minNoticeHours: integer("min_notice_hours").notNull().default(2),
     maxDaysAhead: integer("max_days_ahead").notNull().default(7),
+    /** Fork SinCódigo: `maxDaysAhead` cuenta solo los días con horario (`src/lib/agenda-horizonte.ts`). */
+    soloDiasHabiles: boolean("solo_dias_habiles").notNull().default(false),
     timezone: text("timezone").notNull().default("America/Mexico_City"),
     /**
      * Cómo se entrega la reunión. `enlace-fijo` no habla con nadie: es el

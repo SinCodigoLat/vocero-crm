@@ -134,6 +134,8 @@ export function armarHuecos(input: {
   timezone: string;
   now: Date;
   maxDaysAhead: number;
+  /** Fork SinCódigo: el último día ya calculado (días hábiles); sin él, hoy + maxDaysAhead. */
+  horizonEnd?: string;
   limit: number;
   perDay: number;
   /** Ventana del reparto en días, hoy incluido. Sin ella, todo el horizonte. */
@@ -143,7 +145,7 @@ export function armarHuecos(input: {
 }): { slots: SpreadSlot[]; query: ConsultaDeHuecos } {
   const { timezone, now } = input;
   const hoy = dayIsoInTz(now, timezone);
-  const horizonEnd = addDaysISO(hoy, input.maxDaysAhead);
+  const horizonEnd = input.horizonEnd ?? addDaysISO(hoy, input.maxDaysAhead);
   const diaDe = (s: AvailableSlot) => dayIsoInTz(new Date(s.startUtc), timezone);
 
   if (input.date) {

@@ -1,4 +1,5 @@
 import { and, eq, gte, inArray, lte } from "drizzle-orm";
+import { ultimoDiaAgendable } from "@/lib/agenda-horizonte";
 import { getDb, schema } from "@/lib/db";
 import { scoped } from "@/lib/db/tenant";
 import {
@@ -90,7 +91,7 @@ export async function computeAvailability(
   const tz = settings.timezone;
 
   const from = opts?.fromISO ?? todayInTz(now, tz);
-  const to = opts?.toISO ?? addDaysISO(from, settings.maxDaysAhead);
+  const to = opts?.toISO ?? ultimoDiaAgendable(from, settings);
 
   const candidates = buildCandidateSlots(settings, from, to);
   if (candidates.length === 0) return [];

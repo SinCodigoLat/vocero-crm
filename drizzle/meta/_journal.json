@@ -197,6 +197,13 @@
       "when": 1795109075982,
       "tag": "0027_agent_versions",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1795226724480,
+      "tag": "0028_agenda_dias_habiles",
+      "breakpoints": true
     }
   ]
 }

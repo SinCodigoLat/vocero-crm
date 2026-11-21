@@ -1,0 +1,1 @@
+ALTER TABLE "calendar_settings" ADD COLUMN "solo_dias_habiles" boolean DEFAULT false NOT NULL;

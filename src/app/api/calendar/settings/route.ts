@@ -36,6 +36,7 @@ const putSchema = z.object({
   bufferMinutes: z.number().optional(),
   minNoticeHours: z.number().optional(),
   maxDaysAhead: z.number().optional(),
+  soloDiasHabiles: z.boolean().optional(),
   timezone: z.string().optional(),
   // El catálogo manda: un conector que no existe se rechaza aquí, y el
   // servicio lo vuelve a comprobar por si el llamador no es esta ruta.
